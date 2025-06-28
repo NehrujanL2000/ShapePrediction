@@ -32,8 +32,8 @@ print("✅ Model 1 saved (Linear Regression for volumes)")
 def calculate_features(row):
     min_, mid, max_ = row['Min'], row['Mid'], row['Max']
     av, chv, sa = row['Actual volume'], row['Covex hull volume'], row['surface area']
-    EI = mid / max if max != 0 else 0
-    FI = min / mid if mid != 0 else 0
+    EI = mid / max_ if max_ != 0 else 0
+    FI = min_ / mid if mid != 0 else 0
     AR = (EI + FI) / 2
     CI = av / chv if chv != 0 else 0
     S = S = ((36 * np.pi * (av ** 2)) ** (1/3)) / sa if sa != 0 else 0
