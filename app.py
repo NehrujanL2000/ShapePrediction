@@ -21,7 +21,7 @@ if st.button("Predict"):
     input1 = np.array([[max_val, mid_val, min_val]])
     predicted_volumes = model1.predict(input1)[0]
     av, chv, sa = predicted_volumes
-    st.success(f"Predicted Volumes: Actual Volume={av:.3f}, Convex Hull Volume={chv:.3f}, Surface Area={sa:.3f}")
+    st.success(f"Predicted Volumes: Actual Volume = {av:.3f}, Convex Hull Volume = {chv:.3f}, Surface Area = {sa:.3f}")
 
     # === Step 2: Calculate 5 Features ===
     EI = mid_val / max_val if max_val != 0 else 0
@@ -43,6 +43,6 @@ if st.button("Predict"):
 
     # === Step 5: Final Output ===
     st.subheader("🔎 Final Predictions")
-    st.write(f"**Friction Angle:** {friction_angle:.2f}")
-    st.write(f"**Void Ratio:** {void_ratio:.3f}")
+    st.write(f"**Friction Angle =** {friction_angle:.2f}")
+    st.write(f"**Void Ratio =** {void_ratio:.3f}")
     st.write(f"**Shape Class:** {shape_pred}")
