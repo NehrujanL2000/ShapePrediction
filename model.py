@@ -1,0 +1,65 @@
+import joblib
+import numpy as np
+import pandas as pd
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.multioutput import MultiOutputRegressor
+from xgboost import XGBRegressor
+
+# === Load Dataset ===
+file_path = "WithShapeLabels.xlsx"
+df = pd.read_excel(file_path)
+
+# === Model 1: Linear Regression for Volume/Surface Prediction ===
+X1 = df[['Max', 'Mid', 'Min']]
+y1 = df[['Actual volume', 'Covex hull volume', 'surface area']]
+
+model1 = LinearRegression()
+model1.fit(X1, y1)
+joblib.dump(model1, 'model1_linear_reg.pkl')
+print("✅ Model 1 saved (Linear Regression for volumes)")
+
+# === Feature Engineering for Model 2 (EI, FI, AR, CI, S) ===
+def calculate_features(row):
+    min_, mid, max_ = row['Min'], row['Mid'], row['Max']
+    av, chv, sa = row['Actual volume'], row['Covex hull volume'], row['surface area']
+    EI = (max_ - min_) / max_ if max_ != 0 else 0
+    FI = sa / av if av != 0 else 0
+    AR = mid / max_ if max_ != 0 else 0
+    CI = chv / av if av != 0 else 0
+    S = sa / chv if chv != 0 else 0
+    return pd.Series([EI, FI, AR, CI, S])
+
+df[['EI', 'FI', 'AR', 'CI', 'S']] = df.apply(calculate_features, axis=1)
+
+# === Standardize Model 2 Features ===
+X2 = df[['EI', 'FI', 'AR', 'CI', 'S']].values
+scaler = StandardScaler()
+X2_scaled = scaler.fit_transform(X2)
+joblib.dump(scaler, 'scaler_model2.pkl')
+print("✅ Scaler saved for Model 2 features")
+
+# === Model 2 - Regression (XGBoost) ===
+y2_reg = df[['Friction angle', 'Void Ratio']].values
+xgb_regressor = MultiOutputRegressor(XGBRegressor(
+    n_estimators=100,
+    max_depth=6,
+    learning_rate=0.01,
+    subsample=1,
+    objective='reg:squarederror',
+    random_state=42
+))
+xgb_regressor.fit(X2_scaled, y2_reg)
+joblib.dump(xgb_regressor, 'model2_xgb_reg.pkl')
+print("✅ Model 2 Regression saved (XGBoost for FA and VR)")
+
+# === Model 2 - Classification (Random Forest) ===
+y2_cls = df['Shape'].values
+label_encoder = LabelEncoder()
+y2_cls_encoded = label_encoder.fit_transform(y2_cls)
+clf = RandomForestClassifier(n_estimators=50, max_depth=None, random_state=42)
+clf.fit(X2_scaled, y2_cls_encoded)
+joblib.dump(clf, 'model2_rf_cls.pkl')
+joblib.dump(label_encoder, 'shape_label_encoder.pkl')
+print("✅ Model 2 Classification saved (Random Forest for Shape + LabelEncoder)")
