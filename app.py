@@ -9,7 +9,7 @@ model2_cls = joblib.load('model2_rf_cls.pkl')
 scaler = joblib.load('scaler_model2.pkl')
 label_encoder = joblib.load('shape_label_encoder.pkl')
 
-st.title("Particle Shape and Property Prediction App 🚀")
+st.title("Particle Shape and Property Prediction App")
 
 # --- User input ---
 min_val = st.number_input('Enter Min value', min_value=0.0, step=0.0001, format="%.4f")
@@ -21,14 +21,14 @@ if st.button("Predict"):
     input1 = np.array([[max_val, mid_val, min_val]])
     predicted_volumes = model1.predict(input1)[0]
     av, chv, sa = predicted_volumes
-    st.success(f"Predicted Volumes: AV={av:.3f}, CHV={chv:.3f}, SA={sa:.3f}")
+    st.success(f"Predicted Volumes: Actual Volume={av:.3f}, Convex Hull Volume={chv:.3f}, Surface Area={sa:.3f}")
 
     # === Step 2: Calculate 5 Features ===
-    EI = (max_val - min_val) / max_val if max_val != 0 else 0
-    FI = sa / av if av != 0 else 0
-    AR = mid_val / max_val if max_val != 0 else 0
-    CI = chv / av if av != 0 else 0
-    S = sa / chv if chv != 0 else 0
+    EI = mid_val / max_val if max_val != 0 else 0
+    FI = min_val / mid_val if mid_val != 0 else 0
+    AR = (EI + FI) / 2
+    CI = av / chv if chv != 0 else 0
+    S = ((36 * np.pi * (av ^ 2)) ^ (1/3)) / sa if sa != 0 else 0
 
     feature_array = np.array([[EI, FI, AR, CI, S]])
     feature_scaled = scaler.transform(feature_array)
