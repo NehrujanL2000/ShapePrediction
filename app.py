@@ -28,7 +28,7 @@ if st.button("Predict"):
     FI = min_val / mid_val if mid_val != 0 else 0
     AR = (EI + FI) / 2
     CI = av / chv if chv != 0 else 0
-    S = ((36 * np.pi * (av ^ 2)) ^ (1/3)) / sa if sa != 0 else 0
+    S = S = ((36 * np.pi * (av ** 2)) ** (1/3)) / sa if sa != 0 else 0
 
     feature_array = np.array([[EI, FI, AR, CI, S]])
     feature_scaled = scaler.transform(feature_array)
