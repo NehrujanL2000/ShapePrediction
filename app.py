@@ -4,10 +4,10 @@ import joblib
 
 # Load models and scaler
 model1 = joblib.load('model1_linear_reg.pkl')
-model2_reg = joblib.load('model2_voting_multioutput.pkl')
-model2_cls = joblib.load('model2_gnb_cls.pkl')
-scaler = joblib.load('scaler_model2.pkl')
-label_encoder = joblib.load('shape_label_encoder.pkl')
+model2_reg = joblib.load('model2_voting_multioutput.pkl') 
+model2_cls = joblib.load('model2_gnb_cls.pkl')             
+scaler = joblib.load('scaler_model2.pkl')                  
+label_encoder = joblib.load('shape_label_encoder.pkl') 
 
 st.title("Particle Shape and Property Prediction App")
 
