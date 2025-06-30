@@ -11,6 +11,9 @@ label_encoder = joblib.load('shape_label_encoder.pkl')
 
 st.title("Particle Shape and Property Prediction App")
 
+# --- Input unit instruction ---
+st.markdown("**Please enter the dimensions in millimeters (mm):**")
+
 # --- User input ---
 min_val = st.number_input('Enter Min value', min_value=0.0, step=0.0001, format="%.4f")
 mid_val = st.number_input('Enter Mid value', min_value=0.0, step=0.0001, format="%.4f")
